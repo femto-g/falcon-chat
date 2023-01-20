@@ -2,22 +2,22 @@ import React, { useContext } from "react";
 import { SocketContext } from "../contexts/SocketContext";
 import { useEffect, useState } from "react";
 
-export function MessageView(){
+export function MessageView(props){
 
   const { socket } = useContext(SocketContext);
 
-  //sets adds each new message to array triggered when socket object is instantiated
   const [messages, setMessages] = useState([]);
+	//since this runs every render, check if socket already has listeners for this event
   useEffect(() => {
-    if(socket){
-      socket.on('chat message', function(msg) {
+    if(!socket.hasListeners('private message')){
+      socket.on('private message', function(msg) {
         const message = msg;
         setMessages((prevMessages) => [...prevMessages, message]);
         console.log("got message");
-        //console.log(messages);
+        console.log(msg)
       });
     } 
-  },[socket]);
+  },[]);
 
   const [message, setMessage] =  useState("");
   const handleMessageChange = (e) => {
@@ -40,10 +40,15 @@ export function MessageView(){
   //TODO: don't send on empty message
   const handleSubmit = (e) => {
       e.preventDefault();
-      if(message){
-          socket.emit('chat message', message);
+      if(message && message.length != 0){
+          socket.emit('private message', {
+						message: message,
+						to: props.reciever	
+					});
+					setMessages((prevMessages) => [...prevMessages, message]);
           setMessage('');
       }
+
   }    
 
     
