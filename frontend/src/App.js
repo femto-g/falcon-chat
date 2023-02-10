@@ -10,12 +10,16 @@ function App() {
   const [socket, setSocket] = useState(null);
   const [nickname, setNickname] = useState(null);
 	//nickname of user to that will be sent messages
-	const [recieverId, setRecieverId] = useState(null);
+	const [receiverId, setReceiverId] = useState(null);
   //console.log("rendering");
 
-  
+  //make dummy request on startup to check if session exists
 	useEffect(() => {
-    setSocket(io('http://localhost:3001/'), { autoconnect: false });
+		//will attempt connection on second run anyway. hard to avoid but it seems like this doesn't cause issues
+		setSocket(io('http://localhost:3001/',
+		 { autoConnect: false,
+			 withCredentials: true
+		 }));
     //console.log("connecting");
     return () => {
       if(socket){
@@ -24,16 +28,33 @@ function App() {
     }
   }, []);
 
+	//does this need to be seperate now?
 	useEffect(() => {
 		if(socket){
 			socket.on("connect_error", (err) => {
 				console.log(`connect_error due to ${err.message}`);
 			});
+			fetch('http://localhost:3001/session', {
+				method: 'GET',
+				mode: 'cors',
+				credentials: 'include'
+			})
+			.then(response => response.text())
+			.then(name => {
+				console.log(`name from response is ${name}`);
+				if(name && name.length != 0){
+					console.log("something");
+					connectWithNickname(name);
+				}
+			});
+
 		}
 
 	}, [socket]);
 
+	//causes bug because socket isn't set when socket.auth is accessed.
 	const connectWithNickname = (name) => {
+		console.log(`connecting with ${name} `);
 		//console.log(name);
 		socket.auth = { name };
 		socket.connect();
@@ -41,24 +62,24 @@ function App() {
 		//console.log("setname");
 	}
 
-	const selectReciever = (name) => {
-		socket.on("id_of_reciever", (id) => {
-			console.log(id);
-			setRecieverId(id);
+	const selectReceiver = (name) => {
+		socket.on("id_of_receiver", (id) => {
+			console.log(`got receiver id of ${id}, for user: ${name}`);
+			setReceiverId(id);
 		})
 
-		socket.emit("selecting_reciever", name);
+		socket.emit("selecting_receiver", name);
 	}
 
 
 	//render nickname form if nickname isn't yet set
 	//else render message view
 	if(nickname){
-		if(recieverId){
+		if(receiverId){
 			return (
 				<div className="App">
 					<SocketContext.Provider value={{socket}}>
-						<MessageView reciever={recieverId}/>
+						<MessageView name={nickname} receiver={receiverId} />
 					</SocketContext.Provider>
 				</div>
 			);
@@ -66,7 +87,7 @@ function App() {
 		else{
 			return (
 				<div className="App">
-					<NicknameForm prompt="Enter the user you would like to message (Must be online)" onNicknameSubmit={selectReciever} />
+					<NicknameForm prompt={"Hello " + nickname + ", Enter the user you would like to message (Must be online)"} onNicknameSubmit={selectReceiver} />
 				</div>
 			)
 			

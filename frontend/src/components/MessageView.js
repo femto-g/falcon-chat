@@ -17,6 +17,7 @@ export function MessageView(props){
         console.log(msg)
       });
     } 
+		//add cleanup
   },[]);
 
   const [message, setMessage] =  useState("");
@@ -42,10 +43,10 @@ export function MessageView(props){
       e.preventDefault();
       if(message && message.length != 0){
           socket.emit('private message', {
-						message: message,
-						to: props.reciever	
+						message: props.name + ': ' + message,
+						to: props.receiver	
 					});
-					setMessages((prevMessages) => [...prevMessages, message]);
+					setMessages((prevMessages) => [...prevMessages, props.name + ': ' + message]);
           setMessage('');
       }
 
