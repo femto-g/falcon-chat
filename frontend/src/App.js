@@ -11,11 +11,8 @@ function App() {
   const [nickname, setNickname] = useState(null);
 	//nickname of user to that will be sent messages
 	const [receiverId, setReceiverId] = useState(null);
-  //console.log("rendering");
-
-  //make dummy request on startup to check if session exists
+  
 	useEffect(() => {
-		//will attempt connection on second run anyway. hard to avoid but it seems like this doesn't cause issues
 		setSocket(io('http://localhost:3001/',
 		 { autoConnect: false,
 			 withCredentials: true
@@ -28,7 +25,7 @@ function App() {
     }
   }, []);
 
-	//does this need to be seperate now?
+	//make dummy request on startup to check if session exists
 	useEffect(() => {
 		if(socket){
 			socket.on("connect_error", (err) => {

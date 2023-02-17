@@ -7,8 +7,31 @@ const session = require("express-session");
 const { v4: uuidv4 } = require('uuid');
 const cors = require('cors');
 const MemoryStore = require('memorystore')(session);
-
 const httpServer = http.createServer(app);
+//const db = require('./db/index.js');
+const passport = require('passport');
+const LocalStrategy = require('passport-local');
+const crypto = require('crypto');
+//const pgStore = db.createStore(session);
+
+
+//PASSPORT
+
+// passport.use(new LocalStrategy(function verify(username, password, cb) {
+//   db.query('SELECT * FROM users WHERE username = ?', [ username ], function(err, row) {
+//     if (err) { return cb(err); }
+//     if (!row) { return cb(null, false, { message: 'Incorrect username or password.' }); }
+
+//     crypto.pbkdf2(password, row.salt, 310000, 32, 'sha256', function(err, hashedPassword) {
+//       if (err) { return cb(err); }
+//       if (!crypto.timingSafeEqual(row.hashed_password, hashedPassword)) {
+//         return cb(null, false, { message: 'Incorrect username or password.' });
+//       }
+//       return cb(null, row);
+//     });
+//   });
+// }));
+
 const io = new socket.Server(httpServer, {
   cors: {
     origin: "http://localhost:3000",
@@ -152,10 +175,12 @@ io.use((socket, next) => {
 		if(!req.session.userId){
 			req.session.userId = uuidv4();
 			req.session.name = nickname;
-			socket.userId = req.session.userId;
-			socket.join(socket.userId);
-			console.log(`User id for ${nickname} is ${socket.userId}`);
 		}
+		
+		socket.userId = req.session.userId;
+		socket.join(socket.userId);
+		console.log(`User id for ${nickname} is ${socket.userId}`);
+
 		req.session.save();
 		//console.log(req.session);
 		//console.log(`this is the session id from socket ${req.sessionID}`);
@@ -184,7 +209,12 @@ io.use((socket, next) => {
 // 	next();
 // })
 
-// app.listen(3000); will not work here, as it creates a new HTTP serve
-httpServer.listen(port, function () {
-  console.log(`Example app listening on port ${port}!`);
-});
+// app.listen(3000); will not work here, as it creates a new HTTP server
+//do not listen when testing
+// if(process.env.NODE_ENV != 'test'){
+// 	httpServer.listen(port, function () {
+// 		console.log(`Example app listening on port ${port}!`);
+// 	});
+// }
+
+module.exports = {app, httpServer, io};
