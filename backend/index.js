@@ -9,28 +9,11 @@ const cors = require('cors');
 const MemoryStore = require('memorystore')(session);
 const httpServer = http.createServer(app);
 //const db = require('./db/index.js');
-const passport = require('passport');
-const LocalStrategy = require('passport-local');
-const crypto = require('crypto');
 //const pgStore = db.createStore(session);
 
 
-//PASSPORT
+//use passport.initialize middleware and passport.session middleware
 
-// passport.use(new LocalStrategy(function verify(username, password, cb) {
-//   db.query('SELECT * FROM users WHERE username = ?', [ username ], function(err, row) {
-//     if (err) { return cb(err); }
-//     if (!row) { return cb(null, false, { message: 'Incorrect username or password.' }); }
-
-//     crypto.pbkdf2(password, row.salt, 310000, 32, 'sha256', function(err, hashedPassword) {
-//       if (err) { return cb(err); }
-//       if (!crypto.timingSafeEqual(row.hashed_password, hashedPassword)) {
-//         return cb(null, false, { message: 'Incorrect username or password.' });
-//       }
-//       return cb(null, row);
-//     });
-//   });
-// }));
 
 const io = new socket.Server(httpServer, {
   cors: {
@@ -49,7 +32,7 @@ const store = new MemoryStore({
 	checkPeriod: 86400000
  });
 const sessionMiddleware = session({
-	 secret: 'keyboard cat', 
+	 secret: process.env.EXPRESS_SESSION_SECRET || 'keyboard cat', 
 	 cookie: { maxAge: 1000 * 60 * 5},
 	 resave: false,
 	 saveUninitialized: true,
@@ -176,7 +159,7 @@ io.use((socket, next) => {
 			req.session.userId = uuidv4();
 			req.session.name = nickname;
 		}
-		
+
 		socket.userId = req.session.userId;
 		socket.join(socket.userId);
 		console.log(`User id for ${nickname} is ${socket.userId}`);
