@@ -8,8 +8,11 @@ const { v4: uuidv4 } = require('uuid');
 const cors = require('cors');
 const MemoryStore = require('memorystore')(session);
 const httpServer = http.createServer(app);
-//const db = require('./db/index.js');
-//const pgStore = db.createStore(session);
+const db = require('./db/index.js');
+const pgStore = db.createStore(session);
+const authRouter = require('./routes/auth.js');
+const bodyParser = require('body-parser');
+const passport = require('passport');
 
 
 //use passport.initialize middleware and passport.session middleware
@@ -27,6 +30,7 @@ const corsOptions = {
 	credentials: true
 }
 app.use(cors(corsOptions));
+app.use(bodyParser.json());
 
 const store = new MemoryStore({
 	checkPeriod: 86400000
@@ -38,12 +42,18 @@ const sessionMiddleware = session({
 	 saveUninitialized: true,
 	 store: store
 	 });
+	 
 app.use(sessionMiddleware);
+app.use(passport.initialize());
+app.use(passport.session());
+
+
 
 app.get("/", function (req, res) {
   res.send("Hello World!");
 });
 
+app.use("/", authRouter);
 
 app.get("/session", (req, res) => {
 	//console.log(req.session);
@@ -200,4 +210,10 @@ io.use((socket, next) => {
 // 	});
 // }
 
-module.exports = {app, httpServer, io};
+//error handler
+app.use((err, req, res, next) => {
+	console.log(err.stack);
+  res.sendStatus(401);
+})
+
+module.exports = {app, httpServer, io, db};

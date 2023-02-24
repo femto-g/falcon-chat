@@ -59,6 +59,11 @@ function App() {
 		//console.log("setname");
 	}
 
+	//login function
+	const login = (username, password) => {
+
+	}
+
 	const selectReceiver = (name) => {
 		socket.on("id_of_receiver", (id) => {
 			console.log(`got receiver id of ${id}, for user: ${name}`);

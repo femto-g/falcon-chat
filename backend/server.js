@@ -1,3 +1,6 @@
+//config dotenv here
+const dotenv = require('dotenv');
+dotenv.config({path: `../env/.env.${process.env.NODE_ENV}`});
 const {httpServer} = require('./index.js');
 const port = 3001;
 

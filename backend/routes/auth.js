@@ -1,6 +1,6 @@
 const express = require('express');
-const router = express.Router;
-const db = require('./db/index.js');
+const router = express.Router();
+const db = require('../db/index.js');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const crypto = require('crypto');
@@ -13,13 +13,17 @@ const crypto = require('crypto');
 
 passport.use(new LocalStrategy(function verify(username, password, done) {
   //done() is passport.authenticate
-  db.query('SELECT * FROM users WHERE username = ?', [ username ], function(err, row) {
+  db.query('SELECT * FROM users WHERE username = $1', [ username ], function(err, result) {
     if (err) { 
       return done(err); 
     }
+
+    const row = result.rows[0];
+
     if (!row) { 
       return done(null, false, { message: 'Incorrect username or password.' }); 
     }
+    //console.log(row);
     crypto.pbkdf2(password, row.salt, 310000, 32, 'sha256', function(err, hashedPassword) {
       if (err) {
          return done(err); 
@@ -42,7 +46,20 @@ passport.deserializeUser((user, done) => {
 });
 
 //may add options/callback here depending on what to do on fail or pass
-router.post('/login', passport.authenticate('local'));
+router.post('/login', (req, res, next) => {
+  passport.authenticate('local', (err, user, info) => {
+    if(err){
+      return next(err);
+    }
+    if(!user){
+      res.sendStatus(401);
+    }
+    else{
+      res.sendStatus(200);
+    }
+    //call req.login
+  })(req, res, next);
+});
 
 router.post('/logout', function(req, res, next) {
   req.logout(function(err) {
@@ -54,10 +71,10 @@ router.post('/logout', function(req, res, next) {
 });
 
 router.post('/signup', function(req, res, next) {
-  var salt = crypto.randomBytes(16);
+  const salt = crypto.randomBytes(16);
   crypto.pbkdf2(req.body.password, salt, 310000, 32, 'sha256', function(err, hashedPassword) {
     if (err) { return next(err); }
-    db.query('INSERT INTO users (username, hashed_password, salt) VALUES (?, ?, ?)', [
+    db.query('INSERT INTO users (username, hashed_password, salt) VALUES ($1, $2, $3)', [
       req.body.username,
       hashedPassword,
       salt
@@ -65,16 +82,19 @@ router.post('/signup', function(req, res, next) {
       if (err) { 
         return next(err); 
       }
-      var user = {
-        id: this.lastID,
+      const user = {
+        //id: this.lastID,
         username: req.body.username
       };
       req.login(user, function(err) {
         if (err) {
           return next(err); 
         }
-        res.redirect('/');
+        //res.redirect('/');
+        res.sendStatus(200);
       });
     });
   });
 });
+
+module.exports = router;
