@@ -2,9 +2,9 @@ import React, {useState} from 'react';
 
 export function AuthForm(props){
 
-  const [username, setUsername] = useState();
-  const [password, setPassword] = useState();
-  const [errorMessage, setErrorMessage] = useState();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
 
   const onUsernameChange = (e) => {
@@ -18,7 +18,12 @@ export function AuthForm(props){
   const handleSubmit = (e) => {
     e.preventDefault();
     const error = props.submitLogin(username, password);
-    setErrorMessage(error);
+    //send text back eventually
+    //setErrorMessage(error);
+    //this happens even if request is good FIX THIS
+    if(error){
+      setErrorMessage(`${props.signType} failed, try again`);
+    }
   }
 
   return(

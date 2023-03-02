@@ -57,7 +57,8 @@ router.post('/login', (req, res, next) => {
     else{
       res.sendStatus(200);
     }
-    //call req.login
+    //call req.login instead of sendStatus(200) on authentication success
+    req.login(user, next);
   })(req, res, next);
 });
 
@@ -66,6 +67,7 @@ router.post('/logout', function(req, res, next) {
     if (err) {
       return next(err); 
     }
+    //send some kind of res to client and go back to login page
     res.redirect('/');
   });
 });

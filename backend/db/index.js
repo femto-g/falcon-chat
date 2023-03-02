@@ -22,12 +22,11 @@ const query = (text, params, callback) => {
 }
 
 const createStore = (session) => {
-  // const store = require('connect-pg-simple')(session);
-  // return new store({
-  //   pool: pool,
-  //   createTableIfMissing: true
-  // });
-  return null;
+  const store = require('connect-pg-simple')(session);
+  return new store({
+    pool: pool,
+    createTableIfMissing: true
+  });
 }
 
 const close = () => {

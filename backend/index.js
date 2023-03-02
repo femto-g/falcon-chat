@@ -15,8 +15,6 @@ const bodyParser = require('body-parser');
 const passport = require('passport');
 
 
-//use passport.initialize middleware and passport.session middleware
-
 
 const io = new socket.Server(httpServer, {
   cors: {
@@ -40,9 +38,9 @@ const sessionMiddleware = session({
 	 cookie: { maxAge: 1000 * 60 * 5},
 	 resave: false,
 	 saveUninitialized: true,
-	 store: store
+	 store: pgStore
 	 });
-	 
+
 app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
@@ -56,42 +54,28 @@ app.get("/", function (req, res) {
 app.use("/", authRouter);
 
 app.get("/session", (req, res) => {
-	//console.log(req.session);
-	// store.all((err, sessions) => {
-	// 	if(err){
-	// 		console.log(err);
-	// 	}
-	// 	else{
-	// 		console.log("printing sessions in express middleware");
-	// 		console.log(sessions);
-	// 		console.log(` ^these are the sessions in express middleware^`);
-	// 	}
-	// });
-	//console.log(`this is the session id from express ${req.sessionID}`);
-
-	// req.session.dummy = 'dummy';
-	// req.session.save((err) => {
-	// 	if(err){
-	// 		console.log(err);
-	// 	}
-	// });
-	console.log(`From session middleware, the nickname is ${req.session.name}`);
-	res.send(req.session.name);
-
-
+	//console.log(`From session middleware, the nickname is ${req.session.name}`);
+	//res.send(req.session.name);
+	
+	if(!req.user){
+		res.sendStatus(401);
+		return;
+	}
+	res.sendStatus(200);
+	return;
 });
 
 io.on('connection', (socket) => {
-    console.log(` ${socket.nickname} connected`);
+    console.log(` ${socket.username} connected`);
     socket.on('disconnect', () => {
-      console.log(`${socket.nickname} user disconnected`);
+      console.log(`${socket.username} user disconnected`);
     });
 
 		//Not used anymore
-    socket.on('chat message', (msg) => {
-      io.emit('chat message', msg);
-      console.log('message: ' + msg);
-    });
+    // socket.on('chat message', (msg) => {
+    //   io.emit('chat message', msg);
+    //   console.log('message: ' + msg);
+    // });
 
 		socket.onAny((e, ...args) => {
 			console.log(`On any catcher recieved event: ${e} from socket/user: ${socket.nickname} with arguments: ${args}`);
@@ -109,18 +93,21 @@ io.on('connection', (socket) => {
 		socket.on('selecting_receiver', (name) => {
 			let receiverId = "not found";
 			for(let [id, socket] of io.of("/").sockets) {
-				if(socket.nickname === name){
+				if(socket.username === name){
 					receiverId = socket.userId;
 				}
 			}
 			console.log(`Sending user id: ${receiverId} to user: ${socket.nickname}`)
 			socket.emit("id_of_receiver", receiverId);
 		})
+		
   });
 
 const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
 
 io.use(wrap(sessionMiddleware));
+io.use(wrap(passport.initialize()));
+io.use(wrap(passport.session()));
 
 //client will connect on startup.
 //check if userId is associated with session
@@ -128,66 +115,58 @@ io.use(wrap(sessionMiddleware));
 //can't because only on connectiono does socket middleware
 
 
-// io.use((socket, next) => {
-
-// 	store.all((err, sessions) => {
-// 		if(err){
-// 			console.log(err);
-// 		}
-// 		else{
-// 			console.log("print sessions in socket middleware");
-// 			console.log(sessions);
-// 			console.log(`^these are the sessions in socket middleware^`);
-// 		}
-	
-// 	})
-	
-// 	next();
-// });
-
 io.use((socket, next) => {
+	//check if user is authenticated, if not throw connection error? <--- do this instead of checking if nickname exists
 	const req = socket.request;
-	const nickname = socket.handshake.auth.name;
-	let userId;
-//
+	//const nickname = socket.handshake.auth.name;
+	//let userId;
+//new code
+	
 
-	if(!nickname){
-		//console.log(socket.handshake.auth);
-		console.log("error invalid nickname");
-		return next(new Error("invalid nickname"));
-	}
+	// if(!nickname){
+	// 	//console.log(socket.handshake.auth);
+	// 	console.log("error invalid nickname");
+	// 	return next(new Error("invalid nickname"));
+	// }
+
 
 	//if its a new session generate new user id
-	//console.log(`this is the session id before reload ${req.sessionID}`);
-	//call this async function since outside of http request so put all session access or change here
+
+	//have to call session.reload() and session.save() because you are not in http request
 	req.session.reload((err) => {
+		
 		if (err) {
 			//return socket.disconnect();
-			console.log(err);
-		}
-		if(!req.session.userId){
-			req.session.userId = uuidv4();
-			req.session.name = nickname;
+			//console.log(err);
+			return next(err);
 		}
 
-		socket.userId = req.session.userId;
+		if(!req.user){
+			//console.log(socket.handshake.auth);
+			console.log("Not authenticated");
+			return next(new Error("User not authenticated"));
+		}
+
+		if(!req.session.socket){
+			//might just want to use a userID in users database table because this will be lost when cookie expires idk
+			req.session.socket = { userId: uuidv4() };
+			//remove this later it might be redundant
+			//req.session.name = nickname;
+		}
+
+		socket.userId = req.session.socket.userId;
+		socket.username = req.user.username;
 		socket.join(socket.userId);
-		console.log(`User id for ${nickname} is ${socket.userId}`);
+		console.log(`User id for ${socket.username} is ${socket.userId}`);
 
 		req.session.save();
-		//console.log(req.session);
-		//console.log(`this is the session id from socket ${req.sessionID}`);
+		next();
 	});
 
-	// socket.userId = userId;
 
-	//socket joins room with same name of user id
-	//socket.join(userId);
-	socket.nickname = nickname;
-	console.log(`User id for ${socket.nickname} is ${socket.userId}`);
-	//console.log(req.session);
-	//console.log(`this is the session id from socket ${req.sessionID}`);
-	next();
+	//set socket.nickname to req.session.passport.user.username
+	// socket.nickname = nickname;
+	// console.log(`User id for ${socket.nickname} is ${socket.userId}`);
 })
 
 
@@ -202,13 +181,6 @@ io.use((socket, next) => {
 // 	next();
 // })
 
-// app.listen(3000); will not work here, as it creates a new HTTP server
-//do not listen when testing
-// if(process.env.NODE_ENV != 'test'){
-// 	httpServer.listen(port, function () {
-// 		console.log(`Example app listening on port ${port}!`);
-// 	});
-// }
 
 //error handler
 app.use((err, req, res, next) => {

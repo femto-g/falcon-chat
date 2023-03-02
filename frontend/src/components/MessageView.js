@@ -27,7 +27,7 @@ export function MessageView(props){
   }
 
   //converts array of messages into <li>
-  //TODO: fix this to use actual unique keys later
+  //TODO: fix this to use actual unique keys later maybe date?
   const [listItems, setListItems] = useState([]);
   useEffect(() => {
       //console.log(messages);
