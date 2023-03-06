@@ -5,6 +5,9 @@ import { SocketContext } from './contexts/SocketContext';
 import { MessageView } from './components/MessageView';
 import { NicknameForm } from './components/NicknameForm';
 import { AuthForm } from './components/AuthForm';
+import {createBrowserRouter, RouterProvider} from 'react-router-dom';
+import { UserSelect } from './components/UserSelect';
+
 
 function App() {
   
@@ -106,16 +109,20 @@ function App() {
 	}
 
 	const selectReceiver = (name) => {
-		socket.on("id_of_receiver", (id) => {
-			console.log(`got receiver id of ${id}, for user: ${name}`);
-			setReceiverId(id);
-		})
+		// socket.on("id_of_receiver", (id) => {
+		// 	console.log(`got receiver id of ${id}, for user: ${name}`);
+		// 	setReceiverId(id);
+		// })
 
-		socket.emit("selecting_receiver", name);
+		// socket.emit("selecting_receiver", name);
+		setReceiverId(name);
 	}
 
 	
-
+	// const router = createBrowserRouter([
+  
+	// ])
+	
 
 	//render nickname form if nickname isn't yet set
 	//else render message view
@@ -132,7 +139,8 @@ function App() {
 		else{
 			return (
 				<div className="App">
-					<NicknameForm prompt={"Hello " + nickname + ", Enter the user you would like to message (Must be online)"} onNicknameSubmit={selectReceiver} />
+					{/* <NicknameForm prompt={"Hello " + nickname + ", Enter the user you would like to message (Must be online)"} onNicknameSubmit={selectReceiver} /> */}
+					<UserSelect selectUser={selectReceiver} />
 				</div>
 			)
 			

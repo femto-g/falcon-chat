@@ -32,6 +32,7 @@ export function MessageView(props){
   useEffect(() => {
       //console.log(messages);
           setListItems(messages.map((message) =>
+            //add a class here to <li> so we can right/left justify self and sender
               <li key={message}>{message}</li>
           ))
       }
@@ -43,10 +44,10 @@ export function MessageView(props){
       e.preventDefault();
       if(message && message.length != 0){
           socket.emit('private message', {
-						message: props.name + ': ' + message,
+						message: message,
 						to: props.receiver	
 					});
-					setMessages((prevMessages) => [...prevMessages, props.name + ': ' + message]);
+					setMessages((prevMessages) => [...prevMessages, message]);
           setMessage('');
       }
 

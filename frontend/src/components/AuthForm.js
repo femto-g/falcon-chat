@@ -20,7 +20,7 @@ export function AuthForm(props){
     const error = props.submitLogin(username, password);
     //send text back eventually
     //setErrorMessage(error);
-    //this happens even if request is good FIX THIS
+    //this happens even if request is good FIX THIS maybe just make this function async and await login?
     if(error){
       setErrorMessage(`${props.signType} failed, try again`);
     }

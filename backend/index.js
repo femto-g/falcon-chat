@@ -65,6 +65,22 @@ app.get("/session", (req, res) => {
 	return;
 });
 
+app.post("/search", (req, res, next) => {
+	const searchQuery = req.body.searchQuery;
+
+	db.query('SELECT username FROM users WHERE username LIKE ($1)', [searchQuery + '%'], (err, result) => {
+		if(err){
+			return next(err);
+		}
+		//console.log(result.rows);
+		//console.log("parsed");
+		//console.log(JSON.parse(JSON.stringify(result.rows)));
+		res.json(result.rows);
+	})
+
+
+});
+
 io.on('connection', (socket) => {
     console.log(` ${socket.username} connected`);
     socket.on('disconnect', () => {
@@ -90,16 +106,17 @@ io.on('connection', (socket) => {
 		// maybe just change this to use username and
 		// have unique usernames unless there is a reason
 		// to obfuscate userId
-		socket.on('selecting_receiver', (name) => {
-			let receiverId = "not found";
-			for(let [id, socket] of io.of("/").sockets) {
-				if(socket.username === name){
-					receiverId = socket.userId;
-				}
-			}
-			console.log(`Sending user id: ${receiverId} to user: ${socket.nickname}`)
-			socket.emit("id_of_receiver", receiverId);
-		})
+		
+		// socket.on('selecting_receiver', (name) => {
+		// 	let receiverId = "not found";
+		// 	for(let [id, socket] of io.of("/").sockets) {
+		// 		if(socket.username === name){
+		// 			receiverId = socket.userId;
+		// 		}
+		// 	}
+		// 	console.log(`Sending user id: ${receiverId} to user: ${socket.nickname}`)
+		// 	socket.emit("id_of_receiver", receiverId);
+		// })
 		
   });
 
@@ -147,17 +164,17 @@ io.use((socket, next) => {
 			return next(new Error("User not authenticated"));
 		}
 
-		if(!req.session.socket){
-			//might just want to use a userID in users database table because this will be lost when cookie expires idk
-			req.session.socket = { userId: uuidv4() };
-			//remove this later it might be redundant
-			//req.session.name = nickname;
-		}
+		// if(!req.session.socket){
+		// 	//might just want to use a userID in users database table because this will be lost when cookie expires idk
+		// 	req.session.socket = { userId: uuidv4() };
+		// 	//remove this later it might be redundant
+		// 	//req.session.name = nickname;
+		// }
 
-		socket.userId = req.session.socket.userId;
+		//socket.userId = req.session.socket.userId;
 		socket.username = req.user.username;
-		socket.join(socket.userId);
-		console.log(`User id for ${socket.username} is ${socket.userId}`);
+		socket.join(socket.username);
+		console.log(`User id for ${socket.username} is ${socket.username}`);
 
 		req.session.save();
 		next();
