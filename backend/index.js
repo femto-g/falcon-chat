@@ -35,7 +35,7 @@ const store = new MemoryStore({
  });
 const sessionMiddleware = session({
 	 secret: process.env.EXPRESS_SESSION_SECRET || 'keyboard cat', 
-	 cookie: { maxAge: 1000 * 60 * 5},
+	 cookie: { maxAge: 1000 * 60 * 30},
 	 resave: false,
 	 saveUninitialized: true,
 	 store: pgStore
@@ -61,7 +61,8 @@ app.get("/session", (req, res) => {
 		res.sendStatus(401);
 		return;
 	}
-	res.sendStatus(200);
+
+	res.json(req.user).status(200);
 	return;
 });
 
@@ -97,8 +98,9 @@ io.on('connection', (socket) => {
 			console.log(`On any catcher recieved event: ${e} from socket/user: ${socket.nickname} with arguments: ${args}`);
 		});
 
-		socket.on('private message', ({message, to}) => {
-      socket.to(to).emit("private message", (message));
+		socket.on('private message', ({message, to, from}) => {
+			//want to save to database here too
+      socket.to(to).emit("private message", {message, from});
 			console.log(`sending private message: ${message} to user with id: ${to} `);
     });
 
@@ -106,7 +108,7 @@ io.on('connection', (socket) => {
 		// maybe just change this to use username and
 		// have unique usernames unless there is a reason
 		// to obfuscate userId
-		
+
 		// socket.on('selecting_receiver', (name) => {
 		// 	let receiverId = "not found";
 		// 	for(let [id, socket] of io.of("/").sockets) {
@@ -138,7 +140,11 @@ io.use((socket, next) => {
 	//const nickname = socket.handshake.auth.name;
 	//let userId;
 //new code
-	
+	if(!req.user){
+			//console.log(socket.handshake.auth);
+			console.log("Not authenticated");
+			return next(new Error("User not authenticated"));
+	}
 
 	// if(!nickname){
 	// 	//console.log(socket.handshake.auth);
@@ -158,11 +164,6 @@ io.use((socket, next) => {
 			return next(err);
 		}
 
-		if(!req.user){
-			//console.log(socket.handshake.auth);
-			console.log("Not authenticated");
-			return next(new Error("User not authenticated"));
-		}
 
 		// if(!req.session.socket){
 		// 	//might just want to use a userID in users database table because this will be lost when cookie expires idk

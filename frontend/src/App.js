@@ -2,16 +2,22 @@ import './App.css';
 import { io } from "socket.io-client";
 import {useEffect, useState} from 'react';
 import { SocketContext } from './contexts/SocketContext';
-import { MessageView } from './components/MessageView';
+import { MessageView } from './components/MessageView/MessageView';
 import { NicknameForm } from './components/NicknameForm';
 import { AuthForm } from './components/AuthForm';
-import {createBrowserRouter, RouterProvider} from 'react-router-dom';
-import { UserSelect } from './components/UserSelect';
+import {createBrowserRouter, createRoutesFromElements, RouterProvider, Route, Routes, redirect, useNavigate} from 'react-router-dom';
+//import { UserSelect } from './components/UserSelect';
+import { ErrorPage } from './components/ErrorPage';
+import { Dashboard } from './components/Dashboard/Dashboard';
+import { Root } from './components/Root';
 
 
 function App() {
   
-  const [socket, setSocket] = useState(null);
+  const [socket, setSocket] = useState(io('http://localhost:3001/',
+	{ autoConnect: false,
+		withCredentials: true
+	}));
   const [nickname, setNickname] = useState(null);
 
 	//nickname of user to that will be sent messages
@@ -19,12 +25,14 @@ function App() {
 
 	const [authStatus, setAuthStatus] = useState(false);
 	const [authError, setAuthError] = useState("");
+
+	
   
 	useEffect(() => {
-		setSocket(io('http://localhost:3001/',
-		 { autoConnect: false,
-			 withCredentials: true
-		 }));
+		// setSocket(io('http://localhost:3001/',
+		//  { autoConnect: false,
+		// 	 withCredentials: true
+		//  }));
     //console.log("connecting");
     return () => {
       if(socket){
@@ -34,23 +42,28 @@ function App() {
   }, []);
 
 	//make dummy request on startup to check if session exists
+
+	const getSession = async () => {
+		const response = await fetch('http://localhost:3001/session', {
+				method: 'GET',
+				mode: 'cors',
+				credentials: 'include'
+			});
+
+		if(response.ok){
+				setAuthStatus(true);
+				socket.connect();
+		}	
+		return response;
+	}
+
 	useEffect(() => {
 		if(socket){
 			socket.on("connect_error", (err) => {
 				console.log(`connect_error due to ${err.message}`);
 			});
-			fetch('http://localhost:3001/session', {
-				method: 'GET',
-				mode: 'cors',
-				credentials: 'include'
-			})
-			.then(response => response.ok)
-			.then(okay => {
-				if(okay){
-					setAuthStatus(true);
-					socket.connect();
-				}
-			});
+			//getSession();
+			
 		}
 
 	}, [socket]);
@@ -118,43 +131,98 @@ function App() {
 		setReceiverId(name);
 	}
 
+	const asyncLoader = async (fn, path) => {
+		const loaded = await fn();
+		if(!loaded){
+			//return redirect(path);
+			
+		}
+		//return redirect;
+	}
+
+	const noSessionRedirect = async () => {
+		// if(authStatus){
+		// 	console.log("logged in, not redirecting");
+		// 	return redirect("/dashboard");
+		// }
+		const session = await getSession();
+		if(!session){
+			//return redirect("/login");
+			//return navigate("/login");
+		}
+		return null;
+	}
+
+	const authRevalidate = () => {
+		return !authStatus;
+	}
+
 	
-	// const router = createBrowserRouter([
-  
-	// ])
+	const router = createBrowserRouter([
+		{
+			path: "/",
+			element: <Root />,
+			errorElement: <ErrorPage />
+		},
+		{
+			path: "login",
+			element: <AuthForm signType="login" submitLogin={login}/>
+		},
+		{
+			path: "signup",
+			element: <AuthForm signType="signup" submitLogin={signup}/>
+		},
+		{
+			path: "dashboard",
+			element: <SocketContext.Provider value={{socket}}>
+				<Dashboard receiverId={receiverId} getSession={getSession} selectReceiver={selectReceiver}/>
+				</SocketContext.Provider>
+			//loader: noSessionRedirect
+		}
+
+	]);
 	
 
 	//render nickname form if nickname isn't yet set
 	//else render message view
-	if(authStatus){
-		if(receiverId){
-			return (
-				<div className="App">
-					<SocketContext.Provider value={{socket}}>
-						<MessageView name="placeholder" receiver={receiverId} />
-					</SocketContext.Provider>
-				</div>
-			);
-		}
-		else{
-			return (
-				<div className="App">
-					{/* <NicknameForm prompt={"Hello " + nickname + ", Enter the user you would like to message (Must be online)"} onNicknameSubmit={selectReceiver} /> */}
-					<UserSelect selectUser={selectReceiver} />
-				</div>
-			)
-			
-		}
 
-	}
-	else{
-		return ( 
-			<div className='App'>
-				{/* <NicknameForm prompt="Enter your nickname" onNicknameSubmit={connectWithNickname} /> */}
-				<AuthForm signType="Sign up" submitLogin={signup} />
-			</div>
-		)
-	}
+	return(
+		// <Routes>
+		// 	<Route path='login' element={<AuthForm signType="login" submitLogin={login}/>} />
+		// 	<Route path='signup' element={<AuthForm signType="signup" submitLogin={signup}/>} />
+		// 	<Route path='dashboard'element={<Dashboard/>} />
+		// </Routes>
+		<RouterProvider router={router} />
+	)
+	// if(authStatus){
+	// 	if(receiverId){
+	// 		return (
+	// 			<div className="App">
+	// 				<SocketContext.Provider value={{socket}}>
+	// 					<MessageView name="placeholder" receiver={receiverId} />
+	// 				</SocketContext.Provider>
+	// 			</div>
+	// 		);
+	// 	}
+	// 	else{
+	// 		return (
+	// 			<div className="App">
+	// 				{/* <NicknameForm prompt={"Hello " + nickname + ", Enter the user you would like to message (Must be online)"} onNicknameSubmit={selectReceiver} /> */}
+	// 				<UserSelect selectUser={selectReceiver} />
+	// 			</div>
+	// 		)
+			
+	// 	}
+
+	// }
+	// else{
+	// 	return ( 
+	// 		<div className='App'>
+	// 			{/* <NicknameForm prompt="Enter your nickname" onNicknameSubmit={connectWithNickname} /> */}
+	// 			<AuthForm signType="Sign up" submitLogin={signup} />
+	// 		</div>
+	// 	)
+	// }
 
 }
 

@@ -1,0 +1,8 @@
+.UserButton{
+  width: 100%;
+  min-height: 5rem;
+  background-color: aliceblue;
+  border-color: azure;
+  border-radius: 10px;
+
+}

@@ -1,0 +1,15 @@
+.UserSelect{
+  flex: 1;
+  
+
+}
+
+.async-select-control{
+  min-height: 50px;
+}
+
+.async-select{
+  height: 5%;
+  min-height: 5%;
+  max-height: 5%;
+}

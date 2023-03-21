@@ -55,10 +55,16 @@ router.post('/login', (req, res, next) => {
       res.sendStatus(401);
     }
     else{
-      res.sendStatus(200);
+      req.login(user, function(err) {
+        if (err) {
+          return next(err); 
+        }
+        //res.redirect('/');
+        res.sendStatus(200);
+      });
+      //res.sendStatus(200);
     }
     //call req.login instead of sendStatus(200) on authentication success
-    req.login(user, next);
   })(req, res, next);
 });
 
@@ -76,11 +82,9 @@ router.post('/signup', function(req, res, next) {
   const salt = crypto.randomBytes(16);
   crypto.pbkdf2(req.body.password, salt, 310000, 32, 'sha256', function(err, hashedPassword) {
     if (err) { return next(err); }
-    db.query('INSERT INTO users (username, hashed_password, salt) VALUES ($1, $2, $3)', [
-      req.body.username,
-      hashedPassword,
-      salt
-    ], function(err) {
+    db.query('INSERT INTO users (username, hashed_password, salt) VALUES ($1, $2, $3)', 
+    [req.body.username, hashedPassword, salt], 
+      function(err) {
       if (err) { 
         return next(err); 
       }
@@ -95,6 +99,7 @@ router.post('/signup', function(req, res, next) {
         //res.redirect('/');
         res.sendStatus(200);
       });
+      //req.login(user, next);
     });
   });
 });
