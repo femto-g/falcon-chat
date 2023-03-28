@@ -17,6 +17,7 @@ export function Dashboard(props){
   const [username, setUsername] = useState(null);
 
   const navigate = useNavigate();
+  const appName = "Chat";
 
   useEffect(() => {
 
@@ -45,10 +46,24 @@ export function Dashboard(props){
     props.selectReceiver(user);
   }
 
+  const logout = async () =>{
+    const responseOK = await props.logout();
+    if(responseOK){
+      navigate("/");
+      navigate(0);
+    }
+
+  }
+
   return(
     <div className='dashboard'>
-      <UserSelect selectUser={handleSelect}/>
-      <MessageView receiver={props.receiverId} username={username}/>
+      <header className='dashboard-header'>{appName}
+        <button className='logout-button' onClick={logout}>Log out</button>
+      </header>
+      <div className='dashboard-content'>
+        <UserSelect selectUser={handleSelect}/>
+        <MessageView receiver={props.receiverId} username={username}/>
+      </div>
     </div>
   )
 }

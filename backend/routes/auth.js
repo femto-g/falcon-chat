@@ -68,13 +68,14 @@ router.post('/login', (req, res, next) => {
   })(req, res, next);
 });
 
-router.post('/logout', function(req, res, next) {
+router.get('/logout', function(req, res, next) {
   req.logout(function(err) {
     if (err) {
       return next(err); 
     }
     //send some kind of res to client and go back to login page
-    res.redirect('/');
+    //res.redirect('/');
+    res.sendStatus(200);
   });
 });
 

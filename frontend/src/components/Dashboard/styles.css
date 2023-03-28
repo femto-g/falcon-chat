@@ -1,9 +1,32 @@
-.dashboard{
+.dashboard-content{
   display:flex;
   flex-direction: row;
   width: 100%;
+  min-height: 97vh;
+  max-height: 97vh;
+  height: 97%;
+
+}
+
+.dashboard{
+  display:flex;
+  flex-direction: column;
   min-height: 100vh;
   max-height: 100vh;
   height: 100%;
 
+}
+
+.dashboard-header{
+
+  min-height: 1rem;
+  max-height: 3vh;
+  height: 3%;
+  text-align: center;
+
+}
+
+.logout-button{
+  float: right;
+  margin-right: 1rem;
 }

@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { SocketContext } from "../../contexts/SocketContext";
 import { useEffect, useState } from "react";
 import './styles.css';
+import { useQuery } from "@tanstack/react-query";
 
 export function MessageView(props){
 
@@ -15,6 +16,9 @@ export function MessageView(props){
         socket.on('private message', function(msg) {
           //const message = msg.message;
           //const from = msg.from;
+          if(msg.from === props.receiver){
+            //set messages here, do something else like, notify of unread messages if not
+          }
           setMessages((prevMessages) => [...prevMessages, msg]);
           console.log("got message");
           console.log(msg)

@@ -21,6 +21,7 @@ const query = (text, params, callback) => {
   return pool.query(text, params, callback);
 }
 
+
 const createStore = (session) => {
   const store = require('connect-pg-simple')(session);
   return new store({

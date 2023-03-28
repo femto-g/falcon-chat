@@ -121,6 +121,20 @@ function App() {
 
 	}
 
+	const logout = async () => {
+		const response = await fetch('http://localhost:3001/logout', {
+			method: 'GET',
+			mode: 'cors',
+			credentials: 'include',
+		});
+		if(response.ok){
+			socket.close();
+			setAuthError(false);
+		}
+
+		return response.ok;
+	}
+
 	const selectReceiver = (name) => {
 		// socket.on("id_of_receiver", (id) => {
 		// 	console.log(`got receiver id of ${id}, for user: ${name}`);
@@ -175,7 +189,7 @@ function App() {
 		{
 			path: "dashboard",
 			element: <SocketContext.Provider value={{socket}}>
-				<Dashboard receiverId={receiverId} getSession={getSession} selectReceiver={selectReceiver}/>
+				<Dashboard receiverId={receiverId} getSession={getSession} selectReceiver={selectReceiver} logout={logout}/>
 				</SocketContext.Provider>
 			//loader: noSessionRedirect
 		}

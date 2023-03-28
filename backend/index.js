@@ -11,6 +11,7 @@ const httpServer = http.createServer(app);
 const db = require('./db/index.js');
 const pgStore = db.createStore(session);
 const authRouter = require('./routes/auth.js');
+const messageRouter = require('./routes/messages.js');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 
@@ -52,6 +53,7 @@ app.get("/", function (req, res) {
 });
 
 app.use("/", authRouter);
+app.use("/", messageRouter);
 
 app.get("/session", (req, res) => {
 	//console.log(`From session middleware, the nickname is ${req.session.name}`);
@@ -100,8 +102,23 @@ io.on('connection', (socket) => {
 
 		socket.on('private message', ({message, to, from}) => {
 			//want to save to database here too
-      socket.to(to).emit("private message", {message, from});
-			console.log(`sending private message: ${message} to user with id: ${to} `);
+			const timestamp = new Date().toISOString();
+			db.query('INSERT into messages(sender, receiver, content, timestamp) values($1, $2, $3, $4)',
+				[from, to, message, timestamp],
+				(err) => {
+					if(err){
+						console.error(err);
+						//send some err to client that message wasn't sent
+					}
+					else{
+						socket.to(to).emit("private message", {message, from});
+						console.log(`sending private message: ${message} to user with id: ${to} `);
+					}
+				}
+			)
+			//
+      // socket.to(to).emit("private message", {message, from});
+			// console.log(`sending private message: ${message} to user with id: ${to} `);
     });
 
 		//now uses userId so its fine
