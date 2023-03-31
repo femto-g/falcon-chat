@@ -19,6 +19,7 @@ function App() {
 		withCredentials: true
 	}));
   const [nickname, setNickname] = useState(null);
+	const [username, setUsername] = useState(null);
 
 	//nickname of user to that will be sent messages
 	const [receiverId, setReceiverId] = useState(null);
@@ -54,6 +55,9 @@ function App() {
 				setAuthStatus(true);
 				socket.connect();
 		}	
+
+		//const user = await response.json()
+		//setUsername(user.username);
 		return response;
 	}
 

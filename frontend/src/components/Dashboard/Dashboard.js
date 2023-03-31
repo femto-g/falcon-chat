@@ -59,9 +59,10 @@ export function Dashboard(props){
     <div className='dashboard'>
       <header className='dashboard-header'>{appName}
         <button className='logout-button' onClick={logout}>Log out</button>
+        <h3 className='username-heading'>{username}</h3>
       </header>
       <div className='dashboard-content'>
-        <UserSelect selectUser={handleSelect}/>
+        <UserSelect selectUser={handleSelect} username={username} receiver={props.receiverId}/>
         <MessageView receiver={props.receiverId} username={username}/>
       </div>
     </div>

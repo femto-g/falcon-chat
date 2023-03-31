@@ -100,19 +100,19 @@ io.on('connection', (socket) => {
 			console.log(`On any catcher recieved event: ${e} from socket/user: ${socket.nickname} with arguments: ${args}`);
 		});
 
-		socket.on('private message', ({message, to, from}) => {
+		socket.on('private message', ({message, receiver, sender, timestamp}) => {
 			//want to save to database here too
-			const timestamp = new Date().toISOString();
-			db.query('INSERT into messages(sender, receiver, content, timestamp) values($1, $2, $3, $4)',
-				[from, to, message, timestamp],
+			//const isoTimestamp = timestamp.toISOString();
+			db.query('INSERT into messages(sender, receiver, content, timestamp, read) values($1, $2, $3, $4, false)',
+				[sender, receiver, message, timestamp],
 				(err) => {
 					if(err){
 						console.error(err);
 						//send some err to client that message wasn't sent
 					}
 					else{
-						socket.to(to).emit("private message", {message, from});
-						console.log(`sending private message: ${message} to user with id: ${to} `);
+						socket.to(receiver).emit("private message", {message, sender, timestamp});
+						console.log(`sending private message: ${message} to user with id: ${receiver} `);
 					}
 				}
 			)
@@ -220,7 +220,7 @@ io.use((socket, next) => {
 //error handler
 app.use((err, req, res, next) => {
 	console.log(err.stack);
-  res.sendStatus(401);
+  return res.sendStatus(500);
 })
 
 module.exports = {app, httpServer, io, db};
