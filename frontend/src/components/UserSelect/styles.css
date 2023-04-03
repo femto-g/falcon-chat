@@ -1,5 +1,6 @@
 .UserSelect{
   flex: 1;
+  height: 100%;
   
 
 }
@@ -9,7 +10,7 @@
 }
 
 .async-select{
-  height: 5%;
+  /* height: 5%;
   min-height: 5%;
-  max-height: 5%;
+  max-height: 5%; */
 }

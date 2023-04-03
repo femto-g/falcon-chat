@@ -1,0 +1,59 @@
+.AuthForm{
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 20%;
+  bottom: 40%;
+  left: 30%;
+  right: 30%;
+  width: 40%;
+  min-width: 40%;
+  max-width: 40%;
+  align-items: center;
+}
+
+.link {
+  color: lightseagreen;
+}
+
+form > input{
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+  width: 100%;
+  height: 2rem;
+  border-color: rgb(230, 227, 227);
+}
+
+
+.submit{
+  background-color: rgb(81, 81, 156);
+  color: white;
+  width: 100%;
+  text-align: center;
+  margin-top: 1.5rem;
+  align-items: center;
+  text-transform: capitalize;
+
+}
+
+form.form {
+  padding: 2rem;
+  background-color: rgb(247, 244, 244);
+  border-color: rgb(230, 227, 227);
+  width: 70%;
+}
+.auth-link-message {
+  margin-top: 1.5rem;
+  padding: 0.5rem;
+  border-color: rgb(230, 227, 227);
+  width: 70%;
+  text-align: center;
+
+}
+
+h1.app-name-heading {
+  text-transform: capitalize;
+  margin-bottom: 2rem;
+}

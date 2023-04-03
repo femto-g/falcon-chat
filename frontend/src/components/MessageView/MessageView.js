@@ -43,7 +43,7 @@ export function MessageView(props){
     return () => socket.off('private message', privateMessageListener);
   }, []);
 
-  const [message, setMessage] =  useState("");
+  const [message, setMessage] =  useState(``);
   const handleMessageChange = (e) => {
       setMessage(e.target.value);
 
@@ -134,13 +134,13 @@ export function MessageView(props){
     
     return(
         <div className="MessageView">
-          <header className="message-view-header">
+          <header className="message-view-header border">
             <h1>{props.receiver}</h1>
           </header>
-            <ul id="messages">{listItems}</ul>
+            <ul className="message-list" id="messages">{listItems}</ul>
             <form id="form" onSubmit={handleSubmit}>
-                <input id="input" autoComplete="off" value={message} onChange={handleMessageChange}/>
-                <input className="button" type="submit" value="Send"/>
+                <input className="message-input" id="input" autoComplete="off" value={message} onChange={handleMessageChange}/>
+                <input className="submit-button" type="submit" value="Send"/>
             </form>    
         </div>
 

@@ -72,7 +72,8 @@ export function UserSelect(props){
   const styles = {
     control: (baseStyles, state) => ({
       ...baseStyles,
-      height: "100%"
+      height: "100%",
+      overflow: 'hidden'//,'min-height': '5%'
     })
   };
 
@@ -148,6 +149,9 @@ export function UserSelect(props){
       className={"async-select"}
       //classNames={{control: (state) => "async-select-control"}}
       styles={styles}
+      controlShouldRenderValue={false}
+      placeholder={"Find or start a chat"}
+      noOptionsMessage={() => "Can't find user"}
       />
       <UserButtonContainer>
         {userList}

@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import './styles.css';
 
 export function AuthForm(props){
 
@@ -45,15 +46,17 @@ export function AuthForm(props){
   return(
 
     <div className="AuthForm">
-      <h1>{props.signType}</h1>
+      <h1 className="app-name-heading">{props.signType}</h1>
       <h2>{errorMessage}</h2>
-      <form action='submit' onSubmit={handleSubmit}>
-        <input id="username" type="text" value={username} onChange={onUsernameChange} required></input>
-        <input id="password" type="password" value={password} onChange={onPasswordChange} required></input>
-        <input type="submit" value={props.signType} ></input>
+      <form className="form rounded-md border" action='submit' onSubmit={handleSubmit}>
+        <label for='username'>Username</label>
+        <input className="text-center rounded-md border" id="username" type="text" value={username} onChange={onUsernameChange} required></input>
+        <label for='password'>Password</label>
+        <input className="text-center rounded-md border"id="password" type="password" value={password} onChange={onPasswordChange} required></input>
+        <input className="submit text-center rounded-md border border-zinc-700" type="submit" value={props.signType} ></input>
       </form>
-      <h2>
-        <Link to={`/${oppositeSignType}`}>{authLinkMessage}</Link>
+      <h2 className="auth-link-message border rounded-md">
+        <Link className="link" to={`/${oppositeSignType}`}>{authLinkMessage}</Link>
       </h2>
 
     </div>

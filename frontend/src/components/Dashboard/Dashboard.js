@@ -17,7 +17,7 @@ export function Dashboard(props){
   const [username, setUsername] = useState(null);
 
   const navigate = useNavigate();
-  const appName = "Chat";
+  const appName = "FalconChat";
 
   useEffect(() => {
 
@@ -57,9 +57,10 @@ export function Dashboard(props){
 
   return(
     <div className='dashboard'>
-      <header className='dashboard-header'>{appName}
-        <button className='logout-button' onClick={logout}>Log out</button>
+      <header className='dashboard-header'>
+        <h3 className='appname-heading'>{appName}</h3>
         <h3 className='username-heading'>{username}</h3>
+        <button className='logout-button border rounded-md' onClick={logout}>Log out</button>
       </header>
       <div className='dashboard-content'>
         <UserSelect selectUser={handleSelect} username={username} receiver={props.receiverId}/>

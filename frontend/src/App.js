@@ -4,12 +4,12 @@ import {useEffect, useState} from 'react';
 import { SocketContext } from './contexts/SocketContext';
 import { MessageView } from './components/MessageView/MessageView';
 import { NicknameForm } from './components/NicknameForm';
-import { AuthForm } from './components/AuthForm';
+import { AuthForm } from './components/AuthForm/AuthForm';
 import {createBrowserRouter, createRoutesFromElements, RouterProvider, Route, Routes, redirect, useNavigate} from 'react-router-dom';
 //import { UserSelect } from './components/UserSelect';
 import { ErrorPage } from './components/ErrorPage';
 import { Dashboard } from './components/Dashboard/Dashboard';
-import { Root } from './components/Root';
+import { Root } from './components/Root/Root';
 
 
 function App() {

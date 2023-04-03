@@ -1,8 +1,10 @@
-.UserButton{
+.UserButton {
   width: 100%;
   min-height: 5rem;
   background-color: aliceblue;
-  border-color: azure;
-  border-radius: 10px;
+  border-color: rgb(230, 227, 227);
+  border-radius: 0.5rem;
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
 
 }

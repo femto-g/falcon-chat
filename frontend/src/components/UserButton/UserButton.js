@@ -9,7 +9,7 @@ export function UserButton(props){
   }
 
   return (
-      <button className="UserButton" onClick={onUserButtonClick}>{props.val} Unread: {props.unread}</button>
+      <button className="UserButton border" onClick={onUserButtonClick}>{props.val} Unread: {props.unread}</button>
 
   )
 }

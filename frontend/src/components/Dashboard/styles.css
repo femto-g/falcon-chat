@@ -22,16 +22,27 @@
   min-height: 1rem;
   max-height: 3vh;
   height: 3%;
-  text-align: center;
+  /* text-align: center; */
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  min-width: 100%;
+  align-items: center;
 
 }
 
 .logout-button{
-  float: right;
   margin-right: 1rem;
+  padding-left: 2px;
+  padding-right: 2px;
+  background-color: rgb(247, 244, 244);
+  border-color: rgb(230, 227, 227);
 }
 
 h3.username-heading{
-  float: right;
   margin-right: 2rem;
+}
+h3.appname-heading {
+  margin-left: auto;
+  margin-right: auto;
 }
