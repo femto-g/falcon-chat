@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import { io } from "socket.io-client";
 import {useEffect, useState} from 'react';
