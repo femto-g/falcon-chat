@@ -33,21 +33,27 @@ export function AuthForm(props){
     }
   }
 
-  const obj = {
+  const authLinkobj = {
     "signup" : "Don't have an account? Sign up!",
     "login" : "Already have an account? Log in!"
   }
 
+  const headingMessage = {
+    "signup" : "Sign up",
+    "login" : "Log in"
+  }
+
   const oppositeSignType = props.signType === "login" ? "signup" : "login";
 
-  const authLinkMessage = obj[oppositeSignType];
+  const authLinkMessage = authLinkobj[oppositeSignType];
   //console.log(authLinkMessage);
 
   return(
 
     <div className="AuthForm">
-      <h1 className="app-name-heading">{props.signType}</h1>
-      <h2>{errorMessage}</h2>
+      <h1 className="appname-heading">FalconChat</h1>
+      <h2 className="auth-heading">{headingMessage[props.signType]}</h2>
+      <h3>{errorMessage}</h3>
       <form className="form rounded-md border" action='submit' onSubmit={handleSubmit}>
         <label for='username'>Username</label>
         <input className="text-center rounded-md border" id="username" type="text" value={username} onChange={onUsernameChange} required></input>
@@ -55,9 +61,9 @@ export function AuthForm(props){
         <input className="text-center rounded-md border"id="password" type="password" value={password} onChange={onPasswordChange} required></input>
         <input className="submit text-center rounded-md border border-zinc-700" type="submit" value={props.signType} ></input>
       </form>
-      <h2 className="auth-link-message border rounded-md">
+      <h3 className="auth-link-message border rounded-md">
         <Link className="link" to={`/${oppositeSignType}`}>{authLinkMessage}</Link>
-      </h2>
+      </h3>
 
     </div>
 

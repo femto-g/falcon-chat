@@ -7,7 +7,7 @@
   left: 30%;
   right: 30%;
   width: 40%;
-  min-width: 40%;
+  min-width: 10rem;
   max-width: 40%;
   align-items: center;
 }
@@ -53,7 +53,10 @@ form.form {
 
 }
 
-h1.app-name-heading {
+.auth-heading {
   text-transform: capitalize;
   margin-bottom: 2rem;
+}
+h2 {
+  font-size: 28px;
 }

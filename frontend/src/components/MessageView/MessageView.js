@@ -10,6 +10,7 @@ export function MessageView(props){
 
   const [messages, setMessages] = useState([]);
 
+
   const queryClient = useQueryClient();
 	//since this runs every render, check if socket already has listeners for this event
   useEffect(() => {
@@ -27,7 +28,7 @@ export function MessageView(props){
           else{
             //do something here like make notification.
             //invalidates userList queries so notifications will be up to date when a message is sent in background
-            //set to null for some reason
+            //set to null for some reason BECAUSE 
             console.log(`invalidating userlist for ${props.username}`);
             queryClient.invalidateQueries({queryKey: ["userList", props.username]});
           }
@@ -131,7 +132,17 @@ export function MessageView(props){
   // }
 
 
+  if(!props.receiver){
+    return(
+      <div className="MessageView-empty">
+        <h1>No conversation selected</h1>
+        <p>Find a friend and start chatting!</p>
+      </div>
+    )
+  }
     
+  else{
+
     return(
         <div className="MessageView">
           <header className="message-view-header border">
@@ -145,4 +156,5 @@ export function MessageView(props){
         </div>
 
     );
+  }
 }

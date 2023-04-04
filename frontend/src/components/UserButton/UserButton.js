@@ -9,7 +9,7 @@ export function UserButton(props){
   }
 
   return (
-      <button className="UserButton border" onClick={onUserButtonClick}>{props.val} Unread: {props.unread}</button>
+      <button className="UserButton border" onClick={onUserButtonClick}>{props.val} <div className="unread-notif rounded-full" style={props.unread > 0 ? {} : {display: 'none'}} >{props.unread > 0 ? props.unread : ''}</div></button>
 
   )
 }

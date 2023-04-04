@@ -73,7 +73,8 @@ export function UserSelect(props){
     control: (baseStyles, state) => ({
       ...baseStyles,
       height: "100%",
-      overflow: 'hidden'//,'min-height': '5%'
+      overflow: 'hidden',
+      'overflow-wrap': 'normal'
     })
   };
 
@@ -100,7 +101,7 @@ export function UserSelect(props){
         data.map((row) => row.conversation)
       );
     },
-    staleTime: 1000 * 60 * 10000,
+    staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false
   });

@@ -55,9 +55,16 @@ export function Dashboard(props){
 
   }
 
+  if(!username){
+    return <div></div>
+  }
+
+  else{
+
+
   return(
     <div className='dashboard'>
-      <header className='dashboard-header'>
+      <header className='dashboard-header '>
         <h3 className='appname-heading'>{appName}</h3>
         <h3 className='username-heading'>{username}</h3>
         <button className='logout-button border rounded-md' onClick={logout}>Log out</button>
@@ -68,4 +75,5 @@ export function Dashboard(props){
       </div>
     </div>
   )
+  }
 }

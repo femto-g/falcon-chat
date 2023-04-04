@@ -25,3 +25,11 @@ a.root-link{
   border-width: 1px;
   border-color: black; */
 }
+
+.appname-heading{
+  font-family: 'Permanent Marker', cursive;
+}
+
+h1 {
+  font-size: 32px;
+}
