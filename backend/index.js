@@ -17,17 +17,16 @@ const passport = require('passport');
 
 
 
-const io = new socket.Server(httpServer, {
-  cors: {
-    origin: "http://localhost:3000",
-    credentials: true
-  }
-});
-
 const corsOptions = {
-	origin: "http://localhost:3000",
+	origin: process.env.CLIENT_URL,
 	credentials: true
 }
+
+const io = new socket.Server(httpServer, {
+  cors: corsOptions
+});
+
+
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
