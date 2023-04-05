@@ -11,10 +11,9 @@ import { ErrorPage } from './components/ErrorPage';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import { Root } from './components/Root/Root';
 
-
 function App() {
   
-  const [socket, setSocket] = useState(io('http://localhost:3001/',
+  const [socket, setSocket] = useState(io(`${process.env.REACT_APP_SERVER_URL}/`,
 	{ autoConnect: false,
 		withCredentials: true
 	}));
@@ -45,7 +44,7 @@ function App() {
 	//make dummy request on startup to check if session exists
 
 	const getSession = async () => {
-		const response = await fetch('http://localhost:3001/session', {
+		const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/session`, {
 				method: 'GET',
 				mode: 'cors',
 				credentials: 'include'
@@ -85,7 +84,7 @@ function App() {
 
 	//login function
 	const login = async (username, password) => {
-		const response = await fetch('http://localhost:3001/login', {
+		const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/login`, {
 			method: 'POST',
 			mode: 'cors',
 			credentials: 'include',
@@ -106,7 +105,7 @@ function App() {
 
 	//signup function
 	const signup = async (username, password) => {
-		const response = await fetch('http://localhost:3001/signup', {
+		const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/signup`, {
 			method: 'POST',
 			mode: 'cors',
 			credentials: 'include',
@@ -126,7 +125,7 @@ function App() {
 	}
 
 	const logout = async () => {
-		const response = await fetch('http://localhost:3001/logout', {
+		const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/logout`, {
 			method: 'GET',
 			mode: 'cors',
 			credentials: 'include',

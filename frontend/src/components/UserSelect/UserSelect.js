@@ -18,7 +18,7 @@ export function UserSelect(props){
   const getUsers = async (e) => {
     console.log(e);
     const searchQuery = e;
-    const response = await fetch('http://localhost:3001/search', {
+    const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/search`, {
 			method: 'POST',
 			mode: 'cors',
 			credentials: 'include',
@@ -81,7 +81,7 @@ export function UserSelect(props){
   const userListQuery = useQuery({
     queryKey: ["userList", props.username],
     queryFn: async () => {
-      const response = await fetch('http://localhost:3001/active-chats', {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/active-chats`, {
         method: 'POST',
         mode: 'cors',
         credentials: 'include',
@@ -118,7 +118,7 @@ export function UserSelect(props){
 
   const readMessageMutation = useMutation({
     mutationFn: async (sender) => {
-      const response = await fetch('http://localhost:3001/read-messages', {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/read-messages`, {
         method: 'POST',
         mode: 'cors',
         credentials: 'include',

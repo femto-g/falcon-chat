@@ -12,7 +12,7 @@ const crypto = require('crypto');
 
 
 passport.use(new LocalStrategy(function verify(username, password, done) {
-  //done() is passport.authenticate
+  //done() is the function passed to passport.authenticate()
   db.query('SELECT * FROM users WHERE username = $1', [ username ], function(err, result) {
     if (err) { 
       return done(err); 

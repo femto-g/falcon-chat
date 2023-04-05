@@ -94,7 +94,7 @@ export function MessageView(props){
   const messagesQuery = useQuery({
     queryKey: ['messages', props.username, props.receiver],
     queryFn: async () => {
-      const response = await fetch('http://localhost:3001/messages', {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/messages`, {
         method: 'POST',
         mode: 'cors',
         credentials: 'include',
