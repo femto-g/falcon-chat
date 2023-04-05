@@ -21,10 +21,7 @@ export function AuthForm(props){
   const handleSubmit = async (e) => {
     e.preventDefault();
     const success = await props.submitLogin(username, password);
-    console.log(`authentication is ${success}`);
-    //send text back eventually
-    //setErrorMessage(error);
-    //this happens even if request is good FIX THIS maybe just make this function async and await login?
+  
     if(success){
       navigate("/dashboard");
     }
@@ -46,7 +43,6 @@ export function AuthForm(props){
   const oppositeSignType = props.signType === "login" ? "signup" : "login";
 
   const authLinkMessage = authLinkobj[oppositeSignType];
-  //console.log(authLinkMessage);
 
   return(
 
@@ -55,9 +51,9 @@ export function AuthForm(props){
       <h2 className="auth-heading">{headingMessage[props.signType]}</h2>
       <h3>{errorMessage}</h3>
       <form className="form rounded-md border" action='submit' onSubmit={handleSubmit}>
-        <label for='username'>Username</label>
+        <label htmlFor='username'>Username</label>
         <input className="text-center rounded-md border" id="username" type="text" value={username} onChange={onUsernameChange} required></input>
-        <label for='password'>Password</label>
+        <label htmlFor='password'>Password</label>
         <input className="text-center rounded-md border"id="password" type="password" value={password} onChange={onPasswordChange} required></input>
         <input className="submit text-center rounded-md border border-zinc-700" type="submit" value={props.signType} ></input>
       </form>

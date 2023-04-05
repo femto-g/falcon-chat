@@ -8,14 +8,7 @@ import './styles.css';
 
 export function Dashboard(props){
 
-  // const session = useLoaderData();
-  // console.log(session);
-  // if(!session){
-  //   redirect('/login');
-  // }
-
   const [username, setUsername] = useState(null);
-
   const navigate = useNavigate();
   const appName = "FalconChat";
 
@@ -30,17 +23,12 @@ export function Dashboard(props){
       }
       else{
         const user = await response.json();
-        console.log(`logged in as ${user.username}`);
         setUsername(user.username);
       }
     }
     checkSession();
 
   },[]);
-
-  // if(!props.authStatus){
-  //   return navigate("/login");
-  // }
 
   const handleSelect = (user) =>{
     props.selectReceiver(user);

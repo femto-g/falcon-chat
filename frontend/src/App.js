@@ -2,8 +2,6 @@ import './App.css';
 import { io } from "socket.io-client";
 import {useEffect, useState} from 'react';
 import { SocketContext } from './contexts/SocketContext';
-import { MessageView } from './components/MessageView/MessageView';
-import { NicknameForm } from './components/NicknameForm';
 import { AuthForm } from './components/AuthForm/AuthForm';
 import {createBrowserRouter, createRoutesFromElements, RouterProvider, Route, Routes, redirect, useNavigate} from 'react-router-dom';
 //import { UserSelect } from './components/UserSelect';
@@ -17,7 +15,7 @@ function App() {
 	{ autoConnect: false,
 		withCredentials: true
 	}));
-  const [nickname, setNickname] = useState(null);
+
 	const [username, setUsername] = useState(null);
 
 	//nickname of user to that will be sent messages
@@ -27,13 +25,7 @@ function App() {
 	const [authError, setAuthError] = useState("");
 
 	
-  
 	useEffect(() => {
-		// setSocket(io('http://localhost:3001/',
-		//  { autoConnect: false,
-		// 	 withCredentials: true
-		//  }));
-    //console.log("connecting");
     return () => {
       if(socket){
         socket.close();
@@ -41,8 +33,7 @@ function App() {
     }
   }, []);
 
-	//make dummy request on startup to check if session exists
-
+	//maybe turn this into react-query query
 	const getSession = async () => {
 		const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/session`, {
 				method: 'GET',
@@ -71,16 +62,6 @@ function App() {
 
 	}, [socket]);
 
-	//causes bug because socket isn't set when socket.auth is accessed.
-	//once auth is set up you can just connect without socket.auth
-	// const connectWithNickname = (name) => {
-	// 	console.log(`connecting with ${name} `);
-	// 	//console.log(name);
-	// 	socket.auth = { name };
-	// 	socket.connect();
-	// 	setNickname(name);
-	// 	//console.log("setname");
-	// }
 
 	//login function
 	const login = async (username, password) => {
@@ -139,40 +120,9 @@ function App() {
 	}
 
 	const selectReceiver = (name) => {
-		// socket.on("id_of_receiver", (id) => {
-		// 	console.log(`got receiver id of ${id}, for user: ${name}`);
-		// 	setReceiverId(id);
-		// })
-
-		// socket.emit("selecting_receiver", name);
 		setReceiverId(name);
 	}
 
-	const asyncLoader = async (fn, path) => {
-		const loaded = await fn();
-		if(!loaded){
-			//return redirect(path);
-			
-		}
-		//return redirect;
-	}
-
-	const noSessionRedirect = async () => {
-		// if(authStatus){
-		// 	console.log("logged in, not redirecting");
-		// 	return redirect("/dashboard");
-		// }
-		const session = await getSession();
-		if(!session){
-			//return redirect("/login");
-			//return navigate("/login");
-		}
-		return null;
-	}
-
-	const authRevalidate = () => {
-		return !authStatus;
-	}
 
 	
 	const router = createBrowserRouter([
@@ -200,46 +150,10 @@ function App() {
 	]);
 	
 
-	//render nickname form if nickname isn't yet set
-	//else render message view
-
 	return(
-		// <Routes>
-		// 	<Route path='login' element={<AuthForm signType="login" submitLogin={login}/>} />
-		// 	<Route path='signup' element={<AuthForm signType="signup" submitLogin={signup}/>} />
-		// 	<Route path='dashboard'element={<Dashboard/>} />
-		// </Routes>
+
 		<RouterProvider router={router} />
 	)
-	// if(authStatus){
-	// 	if(receiverId){
-	// 		return (
-	// 			<div className="App">
-	// 				<SocketContext.Provider value={{socket}}>
-	// 					<MessageView name="placeholder" receiver={receiverId} />
-	// 				</SocketContext.Provider>
-	// 			</div>
-	// 		);
-	// 	}
-	// 	else{
-	// 		return (
-	// 			<div className="App">
-	// 				{/* <NicknameForm prompt={"Hello " + nickname + ", Enter the user you would like to message (Must be online)"} onNicknameSubmit={selectReceiver} /> */}
-	// 				<UserSelect selectUser={selectReceiver} />
-	// 			</div>
-	// 		)
-			
-	// 	}
-
-	// }
-	// else{
-	// 	return ( 
-	// 		<div className='App'>
-	// 			{/* <NicknameForm prompt="Enter your nickname" onNicknameSubmit={connectWithNickname} /> */}
-	// 			<AuthForm signType="Sign up" submitLogin={signup} />
-	// 		</div>
-	// 	)
-	// }
 
 }
 

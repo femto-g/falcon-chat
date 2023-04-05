@@ -16,7 +16,6 @@ export function UserSelect(props){
 
   //gets users from server based on search query
   const getUsers = async (e) => {
-    console.log(e);
     const searchQuery = e;
     const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/search`, {
 			method: 'POST',
@@ -36,13 +35,11 @@ export function UserSelect(props){
 
   //when option is selected from select drop-down
   const handleChange = (e) => {
-    //console.log(`Search selected ${e.value}`);
     const selectedUser = e.value;
     if(!users.includes(selectedUser)){
       setUsers([selectedUser, ...users]);
       setUserList([<UserButton val={selectedUser} key={selectedUser} handleUserButtonClick={handleUserButtonClick}/>, ...userList]);
     }
-    console.log(users);
     props.selectUser(selectedUser);
 
     
@@ -55,19 +52,8 @@ export function UserSelect(props){
 
   const handleUserButtonClick = (user) => {
     props.selectUser(user);
-    //change color here too
-    console.log(`mutating ${user}`);
     readMessageMutation.mutate(user);
   }
-
-  
-  // useEffect(() => {
-  //   setUserList(
-  //     users.map((user) => <UserButton val={user} handleUserButtonClick={handleUserButtonClick}/>)
-  //       //<p>{user}</p>
-  //   )
-  //   //console.log(userList);
-  // }, [users])
 
   const styles = {
     control: (baseStyles, state) => ({
@@ -107,12 +93,11 @@ export function UserSelect(props){
   });
 
   if(userListQuery.isLoading){
-    console.log("Userlist loading...");
-
+    //do something
   };
 
   if(userListQuery.isError){
-    console.log(userListQuery.error);
+    //do something
 
   };
 
@@ -130,7 +115,6 @@ export function UserSelect(props){
       }
     },
     onSuccess: (data, variables, context) => {
-      console.log(`invalidating queries for ${props.username}`);
       queryClient.invalidateQueries({queryKey: ["userList", props.username]});
     }
   });
