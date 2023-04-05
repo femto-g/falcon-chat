@@ -59,12 +59,9 @@ router.post('/login', (req, res, next) => {
         if (err) {
           return next(err); 
         }
-        //res.redirect('/');
         res.sendStatus(200);
       });
-      //res.sendStatus(200);
     }
-    //call req.login instead of sendStatus(200) on authentication success
   })(req, res, next);
 });
 
@@ -73,8 +70,6 @@ router.get('/logout', function(req, res, next) {
     if (err) {
       return next(err); 
     }
-    //send some kind of res to client and go back to login page
-    //res.redirect('/');
     res.sendStatus(200);
   });
 });
@@ -90,19 +85,27 @@ router.post('/signup', function(req, res, next) {
         return next(err); 
       }
       const user = {
-        //id: this.lastID,
         username: req.body.username
       };
       req.login(user, function(err) {
         if (err) {
           return next(err); 
         }
-        //res.redirect('/');
         res.sendStatus(200);
       });
-      //req.login(user, next);
     });
   });
+});
+
+router.get("/session", (req, res) => {
+	
+	if(!req.user){
+		res.sendStatus(401);
+		return;
+	}
+
+	res.json(req.user).status(200);
+	return;
 });
 
 module.exports = router;
