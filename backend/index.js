@@ -25,13 +25,19 @@ const io = new socket.Server(httpServer, {
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
-const sessionMiddleware = session({
-	 secret: process.env.EXPRESS_SESSION_SECRET || 'keyboard cat', 
-	 cookie: { maxAge: 1000 * 60 * 30},
-	 resave: false,
-	 saveUninitialized: true,
-	 store: pgStore
-	 });
+const sessionOptions = {
+	secret: process.env.EXPRESS_SESSION_SECRET || 'keyboard cat', 
+	cookie: { 
+	 maxAge: 1000 * 60 * 30,
+	 secure: process.env.NODE_ENV === 'prod' ? true : false,
+	 sameSite: process.env.NODE_ENV === 'prod' ? "none": "lax"
+	 },
+	resave: false,
+	saveUninitialized: true,
+	store: pgStore
+	}
+
+const sessionMiddleware = session(sessionOptions);
 
 app.use(sessionMiddleware);
 app.use(passport.initialize());
