@@ -12,7 +12,9 @@ const messageRouter = require('./routes/messages.js');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 
-
+if(process.env.NODE_ENV === 'prod'){
+	app.set('trust proxy', true);
+}
 const corsOptions = {
 	origin: process.env.CLIENT_URL,
 	credentials: true
