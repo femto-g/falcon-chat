@@ -110,9 +110,10 @@ export function MessageView(props){
   else{
 
     return(
-        <div className="MessageView">
+        <div className={"MessageView " + (props.active ? "active" : "inactive")}>
           <header className="message-view-header border">
-            <h1>{props.receiver}</h1>
+            <button className="back-button border" onClick={props.switchToUserSelect}>Back</button>
+            <h1 className="receiver-heading">{props.receiver}</h1>
           </header>
             <ul className="message-list" id="messages">{listItems}</ul>
             <form id="form" onSubmit={handleSubmit}>

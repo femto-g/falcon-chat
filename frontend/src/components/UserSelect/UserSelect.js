@@ -124,7 +124,7 @@ export function UserSelect(props){
   
 
   return(
-    <div className='UserSelect'>
+    <div className={'UserSelect ' + (props.active ? 'active' : 'inactive')}>
       <AsyncSelect
       isSearchable={true}
       loadOptions={getUsers}

@@ -9,8 +9,10 @@ import './styles.css';
 export function Dashboard(props){
 
   const [username, setUsername] = useState(null);
+  const [messageViewActive, setMessageViewActive] = useState(false);
   const navigate = useNavigate();
   const appName = "FalconChat";
+  const mediaQueryList = window.matchMedia("only screen and (max-width: 700px)");
 
   useEffect(() => {
 
@@ -30,8 +32,22 @@ export function Dashboard(props){
 
   },[]);
 
+  const switchToUserSelect = () => {
+    setMessageViewActive(false);
+  }
+
+  const switchToMessageView = () => {
+    setMessageViewActive(true);
+  }
+
+
   const handleSelect = (user) =>{
     props.selectReceiver(user);
+    //should switch to message view on mobile
+    if(mediaQueryList.matches){
+      switchToMessageView();
+    }
+
   }
 
   const logout = async () =>{
@@ -50,6 +66,8 @@ export function Dashboard(props){
   else{
 
 
+
+
   return(
     <div className='dashboard'>
       <header className='dashboard-header '>
@@ -58,8 +76,8 @@ export function Dashboard(props){
         <button className='logout-button border rounded-md' onClick={logout}>Log out</button>
       </header>
       <div className='dashboard-content'>
-        <UserSelect selectUser={handleSelect} username={username} receiver={props.receiverId}/>
-        <MessageView receiver={props.receiverId} username={username}/>
+        <UserSelect selectUser={handleSelect} username={username} receiver={props.receiverId} active={!messageViewActive}/>
+        <MessageView receiver={props.receiverId} username={username} active={messageViewActive} switchToUserSelect={switchToUserSelect}/>
       </div>
     </div>
   )

@@ -5,6 +5,30 @@
   width: 80%;
 }
 
+.back-button{
+  display: none;
+
+}
+
+.receiver-heading{
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media only screen and (max-width: 700px){
+  .active{
+    width: 100%;
+  }
+  .inactive{
+    display: none;
+  }
+  .back-button{
+    display: inline;
+    margin-left: 1rem;
+
+  }
+}
+
 .MessageView-empty {
   flex: 4;
   display: flex;
@@ -12,6 +36,9 @@
   width: 80%;
   align-items: center;
   justify-content: center;
+  @media only screen and (max-width: 700px){
+    display: none;
+  }
 }
 
 #form {
@@ -106,6 +133,6 @@ li.not-from-me {
   /* max-height: 5%; */
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: left;
 }
 
