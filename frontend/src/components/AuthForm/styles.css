@@ -1,15 +1,21 @@
 .AuthForm{
   display: flex;
   flex-direction: column;
-  position: fixed;
+  position: absolute;
   top: 20%;
   bottom: 40%;
   left: 30%;
   right: 30%;
   width: 40%;
-  min-width: 10rem;
+  min-width: 20rem;
   max-width: 40%;
   align-items: center;
+
+  @media only screen and (max-width: 800px){
+    position: static;
+    margin: auto;
+
+  }
 }
 
 .link {

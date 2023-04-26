@@ -52,9 +52,9 @@ export function AuthForm(props){
       <h3>{errorMessage}</h3>
       <form className="form rounded-md border" action='submit' onSubmit={handleSubmit}>
         <label htmlFor='username'>Username</label>
-        <input className="text-center rounded-md border" id="username" type="text" value={username} onChange={onUsernameChange} required></input>
+        <input className="text-center rounded-md border" id="username" type="text" value={username} onChange={onUsernameChange} required maxLength={20}></input>
         <label htmlFor='password'>Password</label>
-        <input className="text-center rounded-md border"id="password" type="password" value={password} onChange={onPasswordChange} required></input>
+        <input className="text-center rounded-md border"id="password" type="password" value={password} onChange={onPasswordChange} required ></input>
         <input className="submit text-center rounded-md border border-zinc-700" type="submit" value={props.signType} ></input>
       </form>
       <h3 className="auth-link-message border rounded-md">
