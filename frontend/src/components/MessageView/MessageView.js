@@ -45,6 +45,7 @@ export function MessageView(props){
             return <li key={message.timestamp} className={className}>{message.message}</li>
           }
           ))
+          //switch to message view on mobile when new messages are loaded?
       }
   , [messages])
 
@@ -52,7 +53,7 @@ export function MessageView(props){
   //TODO: don't send on empty message
   const handleSubmit = (e) => {
       e.preventDefault();
-      if(message && message.length != 0){
+      if(message && message.length !== 0){
         let messageObject = {
           message: message,
           receiver: props.receiver,
@@ -88,6 +89,7 @@ export function MessageView(props){
         return {sender: row.sender, message: row.content, timestamp: row.timestamp}
       });
       setMessages(formatedMessages);
+
     }
   });
 
@@ -98,6 +100,25 @@ export function MessageView(props){
     //handle err
   }
 
+  const [prevReceiver, setPrevReceiver] = useState();
+  useEffect(() => {
+    if(props.receiver){
+      if(prevReceiver !== props.receiver ){
+        props.switchToMessageView();
+        setPrevReceiver(props.receiver);
+      }
+    }
+
+  }, [listItems]);
+
+  const onBackButtonClick = () => {
+    props.switchToUserSelect();
+    props.selectUser(null);
+    setPrevReceiver(null);
+    
+  }
+
+
   if(!props.receiver){
     return(
       <div className="MessageView-empty">
@@ -106,13 +127,15 @@ export function MessageView(props){
       </div>
     )
   }
+
+  
     
   else{
 
     return(
         <div className={"MessageView " + (props.active ? "active" : "inactive")}>
           <header className="message-view-header border">
-            <button className="back-button border" onClick={props.switchToUserSelect}>Back</button>
+            <button className="back-button border" onClick={onBackButtonClick}>Back</button>
             <h1 className="receiver-heading">{props.receiver}</h1>
           </header>
             <ul className="message-list" id="messages">{listItems}</ul>

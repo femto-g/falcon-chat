@@ -44,9 +44,9 @@ export function Dashboard(props){
   const handleSelect = (user) =>{
     props.selectReceiver(user);
     //should switch to message view on mobile
-    if(mediaQueryList.matches){
-      switchToMessageView();
-    }
+    // if(mediaQueryList.matches){
+    //   switchToMessageView();
+    // }
 
   }
 
@@ -77,7 +77,8 @@ export function Dashboard(props){
       </header>
       <div className='dashboard-content'>
         <UserSelect selectUser={handleSelect} username={username} receiver={props.receiverId} active={!messageViewActive}/>
-        <MessageView receiver={props.receiverId} username={username} active={messageViewActive} switchToUserSelect={switchToUserSelect}/>
+        <MessageView receiver={props.receiverId} username={username} active={messageViewActive}
+         switchToUserSelect={switchToUserSelect} switchToMessageView={switchToMessageView} selectUser={handleSelect}/>
       </div>
     </div>
   )
