@@ -11,22 +11,31 @@ export function MessageView(props){
   const [messages, setMessages] = useState([]);
 
   const queryClient = useQueryClient();
-
+//BUG this props.receiver is set to the receiver on first render of messageview meaning that any
+//other senders will not be immediately updated when active except by react-query default invalidation
+const [privateMessageListenerRef, setPrivateMesageListenerRef] = useState();
   useEffect(() => {
+
+    if(privateMessageListenerRef && socket){
+      socket.off('private message', privateMessageListenerRef);
+    }
     const privateMessageListener = (msg) => {
+      //console.log(`Received: ${msg.message} from ${msg.sender} receiver : ${props.receiver}`);
           if(msg.sender === props.receiver){
             setMessages((prevMessages) => [...prevMessages, msg]);
           }
           else{
             queryClient.invalidateQueries({queryKey: ["userList", props.username]});
           }
-    }
+    };
+    setPrivateMesageListenerRef(() => privateMessageListener);
+
     if(socket){
         socket.on('private message', privateMessageListener);
     }
 		//cleanup
     return () => socket.off('private message', privateMessageListener);
-  }, []);
+  }, [props.receiver]);
 
   const [message, setMessage] =  useState(``);
   const handleMessageChange = (e) => {

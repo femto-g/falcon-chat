@@ -1,9 +1,10 @@
 import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import AsyncSelect from 'react-select/async';
 import { UserButton } from '../UserButton/UserButton';
 import { UserButtonContainer } from '../UserButtonContainer/UserButtonContainer';
 import './styles.css';
+import { SocketContext } from '../../contexts/SocketContext';
 
 export function UserSelect(props){
 
@@ -81,7 +82,9 @@ export function UserSelect(props){
     },
     onSuccess: (data) => {
       setUserList(
-        data.map((row) => <UserButton val={row.conversation} key={row.conversation} handleUserButtonClick={handleUserButtonClick} unread={row.unread} />)
+        data.map((row) => <UserButton val={row.conversation} key={row.conversation}
+                           handleUserButtonClick={handleUserButtonClick} unread={row.unread}
+                           active={row.conversation === props.receiver} />)
       );
       setUsers(
         data.map((row) => row.conversation)
@@ -118,6 +121,37 @@ export function UserSelect(props){
       queryClient.invalidateQueries({queryKey: ["userList", props.username]});
     }
   });
+
+  //add a socket event listener that calls readMessageMutation.mutate when a message is sent from an active chat
+  const [listenerRef, setListenerRef] = useState();
+  const { socket } = useContext(SocketContext);
+  useEffect(() => {
+
+    if(listenerRef && socket){
+      socket.off('private message', listenerRef);
+    }
+    const receivedMessageFromActiveListener = (msg) => {
+      //console.log(`Read: ${msg.message} from ${msg.sender} receiver : ${props.receiver}`);
+      if(msg.sender === props.receiver){
+        readMessageMutation.mutate(msg.sender);
+        //console.log(`Read: ${msg.message} from ${msg.sender} receiver : ${props.receiver}`);
+        //console.log(`receiver : ${props.receiver}`);
+      }
+    }; 
+    setListenerRef(() => receivedMessageFromActiveListener);
+
+    if(socket){
+        //console.log("attaching receivedmessagelistener");
+        socket.on('private message', receivedMessageFromActiveListener);
+    }
+		//cleanup
+    return () => {
+      socket.off('private message', receivedMessageFromActiveListener);
+      //console.log("deattaching receivedmessagelistener");
+    }
+  }, [props.receiver]);
+
+
 
   
 
