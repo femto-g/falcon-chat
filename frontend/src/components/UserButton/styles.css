@@ -1,16 +1,20 @@
 .UserButton {
   width: 100%;
   min-height: 5rem;
-  background-color: aliceblue;
-  border-color: rgb(230, 227, 227);
-  border-radius: 0.5rem;
-  margin-top: 0.2rem;
-  margin-bottom: 0.2rem;
+  
+  /* border-color: rgb(230, 227, 227);
+  border-radius: 0.5rem; */
+  /* margin-top: 0.2rem;
+  margin-bottom: 0.2rem; */
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
 
+}
+
+.UserButton:hover{
+  background-color: aliceblue;
 }
 
 .unread-notif{

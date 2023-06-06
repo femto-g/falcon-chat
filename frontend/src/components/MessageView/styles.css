@@ -42,7 +42,7 @@
 }
 
 #form {
-  background: rgba(0, 0, 0, 0.15);
+  /* background: rgba(0, 0, 0, 0.15); */
   padding: 0.25rem;
   bottom: 0;
   display: flex;
@@ -55,16 +55,17 @@
 }
 
 .message-input {
-  border: none;
+  border-width: 0.5px;
+  border-color: rgb(212, 210, 210);
   padding: 0 1rem;
   flex-grow: 1;
   border-radius: 2rem;
   margin: 0.25rem 1rem;
   /* color: rgb(188, 193, 197); */
 }
-/* .message-input:focus {
-  color: black;
-} */
+.message-input:focus {
+  background-color: rgb(236, 232, 241);
+}
 
 #input:focus {
   outline: none;
@@ -125,7 +126,7 @@ li.not-from-me {
 .message-view-header {
   flex: 0.5;
   width: 100%;
-  background-color: rgb(247, 244, 244);
+  background-color: rgb(255, 255, 255);
   border-color: rgb(230, 227, 227);
   text-align: center;
   height: 5%;

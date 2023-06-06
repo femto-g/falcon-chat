@@ -39,6 +39,9 @@
   background-color: rgb(247, 244, 244);
   border-color: rgb(230, 227, 227);
 }
+.logout-button:active{
+  background-color: rgb(231, 228, 228);
+}
 
 h3.username-heading{
   margin-right: 2rem;
