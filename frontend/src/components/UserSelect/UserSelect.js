@@ -122,7 +122,6 @@ export function UserSelect(props){
     }
   });
 
-  //add a socket event listener that calls readMessageMutation.mutate when a message is sent from an active chat
   const [listenerRef, setListenerRef] = useState();
   const { socket } = useContext(SocketContext);
   useEffect(() => {
@@ -131,30 +130,21 @@ export function UserSelect(props){
       socket.off('private message', listenerRef);
     }
     const receivedMessageFromActiveListener = (msg) => {
-      //console.log(`Read: ${msg.message} from ${msg.sender} receiver : ${props.receiver}`);
       if(msg.sender === props.receiver){
         readMessageMutation.mutate(msg.sender);
-        //console.log(`Read: ${msg.message} from ${msg.sender} receiver : ${props.receiver}`);
-        //console.log(`receiver : ${props.receiver}`);
+
       }
     }; 
     setListenerRef(() => receivedMessageFromActiveListener);
 
     if(socket){
-        //console.log("attaching receivedmessagelistener");
         socket.on('private message', receivedMessageFromActiveListener);
     }
 		//cleanup
     return () => {
       socket.off('private message', receivedMessageFromActiveListener);
-      //console.log("deattaching receivedmessagelistener");
     }
   }, [props.receiver]);
-
-
-
-  
-
   
 
   return(
